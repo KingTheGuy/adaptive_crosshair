@@ -2,9 +2,17 @@
 
 ## BACKLOG
 
+- [ ] maybe raycast depending on what tool/item the player is holding?
+  - reason 1:(liquids) if the item requires liquid it can raycast liquids.
+  - reason 2:(tool reach) some tools/items may have a different reach
+- [ ] create banner image
+- [ ] (gif) create demo
+- [ ] README file
+- [ ] API(not) really just need to have the proper groups
 
 ## DOING
 
+- [ ] tool_capabilities.. should also look **groupcaps** within it
 - [ ] fix the reach
   - [ ] (allow for modification in settings) base game reach
   - [ ] (survival,creative) mcl gamemode reach
