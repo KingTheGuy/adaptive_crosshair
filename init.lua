@@ -199,7 +199,9 @@ core.register_globalstep(function(dtime)
         -- core.log(dump(hand_item:to_table()))
         local wielded = core.registered_tools[item_name] or core.registered_items[item_name]
         if wielded == nil then
-          wielded = core.registered_tools[""]
+          -- wielded = core.registered_tools[""]
+          wielded = core.registered_tools[""] or
+          core.registered_items[""]                                        --oops I thought "hand" was a tool, it is an item.
         end
         local secondary = nil
         if wielded ~= nil then
@@ -248,7 +250,7 @@ core.register_globalstep(function(dtime)
           local node = core.registered_nodes[core.get_node(node_under).name]
           local group_stone = node["groups"]["pickaxey"] or node["groups"]["stone"]
           local group_wood = node["groups"]["axey"] or node["groups"]["axe"] or node["groups"]["choppy"] or
-          node["groups"]["tree"]
+              node["groups"]["tree"]
           local group_soil = node["groups"]["soil"] or node["groups"]["dirt"] or node["groups"]["sand"] or
               node["groups"]["shovel"] or node["groups"]["shovely"]
           local group_hoe = node["groups"]["hoey"]
