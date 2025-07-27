@@ -16,10 +16,10 @@
 ## DOING
 
 - [.] create banner image
-- [ ] (gif) create demo
 
 ## DONE
 
+- [x] (gif) create demo
 - [x] README file
 - [x] fix the reach
   - [x] (survival,creative) mcl gamemode reach
