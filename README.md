@@ -1,4 +1,4 @@
-![demo_gif](https://github.com/KingTheGuy/adaptive_crosshair/blob/main/repo_assets/demo.gif)
+![demo_gif](https://github.com/KingTheGuy/adaptive_crosshair/blob/main/repo_assets/demp.gif)
 
 Crosshair adapts depending on what the player is wielding and looking at.
 
