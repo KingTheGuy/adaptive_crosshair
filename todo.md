@@ -15,7 +15,11 @@
 
 ## DOING
 
+- NOTE: groups.axe <- this works no brackets needed.
+- getGroup function just return when group found.
+- get reach/range from itemstack:get_definition
 - [.] create banner image
+- [ ] on release make sure to exclude .aseprite files
 
 ## DONE
 

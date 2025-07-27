@@ -199,7 +199,8 @@ core.register_globalstep(function(dtime)
         -- core.log(dump(hand_item:to_table()))
         local wielded = core.registered_tools[item_name] or core.registered_items[item_name]
         if wielded == nil then
-          wielded = core.registered_tools[""]
+          -- wielded = core.registered_tools[""]
+          wielded = core.registered_tools[""] or core.registered_items[""] --oops I thought "hand" was a tool, it is an item.
         end
         local secondary = nil
         if wielded ~= nil then
