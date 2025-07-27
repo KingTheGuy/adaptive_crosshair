@@ -2,23 +2,27 @@
 
 ## BACKLOG
 
+- [ ] API(not) really just need to have the proper groups
 - [ ] maybe raycast depending on what tool/item the player is holding?
   - reason 1:(liquids) if the item requires liquid it can raycast liquids.
   - reason 2:(tool reach) some tools/items may have a different reach
-- [ ] create banner image
-- [ ] (gif) create demo
-- [ ] README file
-- [ ] API(not) really just need to have the proper groups
+- [ ] tool_capabilities.. should also look **groupcaps** within it
+  - groups are a mess, fix in the future, or disable correct_tool feature.
+- [ ] settings
+  - reach
+  - colors
+  - features on/off 
 
 ## DOING
 
-- [ ] tool_capabilities.. should also look **groupcaps** within it
-- [ ] fix the reach
-  - [ ] (allow for modification in settings) base game reach
-  - [ ] (survival,creative) mcl gamemode reach
- 
+- [.] create banner image
+- [ ] (gif) create demo
+
 ## DONE
 
+- [x] README file
+- [x] fix the reach
+  - [x] (survival,creative) mcl gamemode reach
 - [.] (engine limitation... I can't fix this) check if pointed thing is self..
 - [x] MOD NAME (Adaptive Crosshair)
   - adaptive crosshair

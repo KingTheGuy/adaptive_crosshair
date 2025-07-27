@@ -1,7 +1,4 @@
--- dofile(core.get_modpath("portalis") .. "/utils.lua")
 local mod_name = "adaptive_crosshair"
-
-local reach_distance = 3.5   --this should be changed to the players reach
 
 local idle_opacity = 60      -- 0 - 255
 local normal_opacity = 165   -- 0 - 255
@@ -9,10 +6,6 @@ local interact_opacity = 125 -- 0 - 255
 local correct_tool_color = "#39FF14"
 local wrong_tool_color = "#f90000"
 local color_alpha = "145" -- 0 - 255
--- local correct_tool_color = "#00f9cc"
--- local correct_tool_color = "#FEE12B"
--- local correct_tool_color = "#39aaf0"
--- local wrong_tool_color = "#e93363"
 
 ---@enum crosshairs
 local crosshairs = {
@@ -35,7 +28,7 @@ local hud_type = {
 
 ---@param player table
 ---@return table {boolean,table,boolean,integer|nil}
-local function lookingAt(player)
+local function lookingAt(player, reach_distance)
   -- if core.registered_tools[item_name] ~= nil then
   --  	core.log(dump(core.registered_tools[item_name]:get_definition()))
   -- end
@@ -153,9 +146,26 @@ local function set_crosshair_action(player, which_hud, crosshair_type, opacity, 
   change_hud(player, which_hud, crosshair_texture)
 end
 
+---CANT USE THIS, game/mods DO FUNKY THINGS, not worth tha hassel right now
+-- ---@return table groups and level
+-- local function getWieldGroup(wield)
+--   local groups_found = false
+
+--   -- prefer looking at tool_capabilities
+--   for index, value in ipairs(wield["tool_capabilities"]) do
+--   end
+
+--   if groups_found == false then
+--     for index, value in ipairs(wield["groups"]) do
+--     end
+--   end
+--   -- ["axe"] ["tool_capabilities"]["max_drop_level"] ["tool_capabilities"]["groupcaps"]["choppy"]["maxlevel"]
+
+--   return {nil,0}
+-- end
+
 local tick = 0
 core.register_globalstep(function(dtime)
-  -- core.log("this is working")
   tick = tick + 0.5
   if tick > 1 then
     -- if core.get_modpath("mcl_meshhand") and mcl_meshhand then
@@ -166,10 +176,23 @@ core.register_globalstep(function(dtime)
     local players = core.get_connected_players()
     if #players > 0 then
       for _, player in ipairs(players) do
+        local reach_distance = 3.5
+        --NOTE: mcl_ reach support
+        if core.get_modpath("mcl_gamemode") and mcl_gamemode then
+          local player_gamemode = mcl_gamemode.get_gamemode(player)
+          if core.get_modpath("mcl_meshhand") and mcl_meshhand then
+            if player_gamemode == "creative" then
+              reach_distance = tonumber(minetest.settings:get("mcl_hand_range_creative")) or 9.5
+            else
+              reach_distance = tonumber(minetest.settings:get("mcl_hand_range")) or 3.5
+            end
+          end
+        end
+
         local hand_item = player:get_wielded_item()
         local item_name = hand_item:get_name()
         local hud = player:hud_get_flags()
-        local looking = lookingAt(player)
+        local looking = lookingAt(player, reach_distance)
 
         hud["crosshair"] = false
         -- check if tool has a USE on_secondary_use
@@ -193,7 +216,7 @@ core.register_globalstep(function(dtime)
 
         -- handle looking at nothing
         if looking[2].type == "air" then
-          if wielded["groups"]["weapon"] or  wielded["groups"]["sword"] then
+          if wielded["groups"]["weapon"] or wielded["groups"]["sword"] then
             set_crosshair_action(player, hud_type.leftclick, crosshairs.attack, idle_opacity)
           end
           if wielded["groups"]["pickaxe"] or wielded["groups"]["axe"] then
@@ -224,7 +247,8 @@ core.register_globalstep(function(dtime)
           local node_under = looking[2].under or nil
           local node = core.registered_nodes[core.get_node(node_under).name]
           local group_stone = node["groups"]["pickaxey"] or node["groups"]["stone"]
-          local group_wood = node["groups"]["axey"] or node["groups"]["axe"] or node["groups"]["choppy"] or node["groups"]["tree"]
+          local group_wood = node["groups"]["axey"] or node["groups"]["axe"] or node["groups"]["choppy"] or
+          node["groups"]["tree"]
           local group_soil = node["groups"]["soil"] or node["groups"]["dirt"] or node["groups"]["sand"] or
               node["groups"]["shovel"] or node["groups"]["shovely"]
           local group_hoe = node["groups"]["hoey"]
@@ -308,14 +332,4 @@ core.register_globalstep(function(dtime)
     end
     tick = 0
   end
-end)
-
----FIXME: THIS IS JUST FOR DEV (disable before publish)
-core.register_on_punchnode(function(pos, node, puncher, pointed_thing)
-  local hand_item = puncher:get_wielded_item()
-  local wield = core.registered_tools[hand_item:get_name()] or core.registered_items[hand_item:get_name()]
-  node = core.registered_nodes[node.name]
-  core.log(core.colorize("blue", dump(node)))
-  core.log(core.colorize("red", dump(wield)))
-  -- core.log(dump(hand_item:get_name()))
 end)
