@@ -2,7 +2,6 @@
 
 ## BACKLOG
 
-- [ ] looking at an unknown node causes crashing
 - [ ] API(not) really just need to have the proper groups
 - [ ] maybe raycast depending on what tool/item the player is holding?
   - reason 1:(liquids) if the item requires liquid it can raycast liquids.
@@ -16,8 +15,8 @@
 
 ## DOING
 
-- [ ] something seems to be broken for multiplayer
-  - may need to remove the player's "hud" when they leave the server
+- [ ] #bug crash when looking at some entities or nodes (age of mending)
+- [ ] looking at an unknown node causes crashing
 - [ ] engine deprecated things.. look at logs
 - NOTE: groups.axe <- this works no brackets needed.
 - for the getGroup function just return when **group** found.
@@ -26,6 +25,8 @@
 
 ## DONE
 
+- [x] something seems to be broken for multiplayer
+  - may need to remove the player's "hud" when they leave the server
 - [x] (craeted a script for this) on release make sure to exclude .aseprite files
 - [x] (gif) create demo
 - [x] README file

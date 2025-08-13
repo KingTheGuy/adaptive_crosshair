@@ -335,3 +335,13 @@ core.register_globalstep(function(dtime)
     tick = 0
   end
 end)
+
+core.register_on_leaveplayer(function(ObjectRef, timed_out)
+  core.log("player left" .. ObjectRef:get_player_name())
+  local player_naem = ObjectRef:get_player_name()
+  for index, value in ipairs(all_huds) do
+    if value[1] == player_naem then
+      table.remove(all_huds, index)
+    end
+  end
+end)
