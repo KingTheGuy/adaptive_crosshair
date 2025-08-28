@@ -26,6 +26,43 @@ local hud_type = {
   leftclick = "leftclick",
 }
 
+-- if you can eat it, you can eat it.
+local all_eatable_items = {}
+core.register_on_mods_loaded(function()
+  for index, value in pairs(core.registered_items) do
+    if core.serialize(value.on_use):match("do_item_eat") then
+      all_eatable_items[index] = true
+    elseif core.serialize(value.on_secondary_use):match("do_item_eat") then
+      all_eatable_items[index] = true
+    elseif core.serialize(value.on_place):match("do_item_eat") then
+      all_eatable_items[index] = true
+      --NOTE: nope this breaks other mods
+      -- local on_use = value.on_use
+      -- local on_place = value.on_place
+      -- local on_secondary_use = value.on_secondary_use
+      -- if core.serialize(value.on_secondary_use):match("do_item_eat") then
+      -- else
+      -- -- if type(value.on_secondary_use) == "function" then
+      -- -- else
+      --   core.override_item(index, {
+      --     -- on_use = false, --why not nil?
+      --     on_place = function(itemstack, placer, pointed_thing)
+      --       on_use(itemstack, placer, pointed_thing)
+      --       -- core.log("i dont know")
+      --     end,        
+      --     on_secondary_use = function(itemstack, user, pointed_thing)
+      --       on_use(itemstack, user, pointed_thing)
+      --       on_secondary_use(itemstack, user, pointed_thing)
+      --       core.log("ok wtf")
+      --     end,
+        
+      --   })
+      -- end
+    end
+  end
+end)
+
+
 ---@param player table
 ---@return table {boolean,table,boolean,integer|nil}
 local function lookingAt(player, reach_distance)
@@ -47,7 +84,11 @@ local function lookingAt(player, reach_distance)
   if dump(raycast_result) == "nil" then
     return { false, { type = "air" }, false, nil }
   elseif raycast_result.type == "node" then
-    local node         = core.registered_nodes[core.get_node(raycast_result.under).name]
+    local node = core.registered_nodes[core.get_node(raycast_result.under).name]
+    if node == nil then
+      core.log("this is unknown... lets not crash")
+    end
+
     local interactible = node.on_rightclick
     if interactible == nil then
       local formspec = core.get_meta(raycast_result.under):to_table()["fields"]["formspec"]
@@ -99,7 +140,7 @@ local texture = mod_name .. "_"
 ---@param type hud_type
 local function create_hud(player, type)
   local hud_id = player:hud_add({
-    hud_elem_type = "image",
+    type = "image",
     position = { x = 0.5, y = 0.5 },
     name = mod_name .. "_" .. type,
     direction = 0,
@@ -292,6 +333,8 @@ core.register_globalstep(function(dtime)
           end
         end
 
+        -- core.log(core.colorize("BLUE",dump(all_eatable_items)))
+
         -- handles interactibles
         if looking[3] then
           local controls = player:get_player_control()
@@ -303,7 +346,10 @@ core.register_globalstep(function(dtime)
           -- handles useable tool/item
         elseif wielded["type"] == "node" and looking[2].type == "node" then
           set_crosshair_action(player, hud_type.rightclick, crosshairs.use, interact_opacity)
-        elseif wielded["type"] == "craft" and wielded["groups"]["eatable"] then
+        -- elseif wielded["type"] == "craft" and wielded["groups"]["eatable"] then
+        -- elseif all_eatable_items[item_name] or wielded["groups"].edible or wielded["groups"].eatable then
+        -- elseif wielded["groups"].edible or wielded["groups"].eatable then
+        elseif all_eatable_items[item_name] then
           set_crosshair_action(player, hud_type.rightclick, crosshairs.use_self, interact_opacity)
         else
           set_crosshair_action(player, hud_type.rightclick, crosshairs.clear, 0)

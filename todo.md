@@ -15,9 +15,11 @@
 
 ## DOING
 
-- [ ] #bug crash when looking at some entities or nodes (age of mending)
+- [x] (this is the best I can do, overriding the item breaks other mods) show 'usable on self' crosshair even if not right_click
+- [x] engine deprecated things.. look at logs
 - [ ] looking at an unknown node causes crashing
-- [ ] engine deprecated things.. look at logs
+- [ ] #bug crash when looking at some entities or nodes (age of mending)
+
 - NOTE: groups.axe <- this works no brackets needed.
 - for the getGroup function just return when **group** found.
 - get reach/range from itemstack:get_definition
