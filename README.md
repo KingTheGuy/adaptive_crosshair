@@ -12,8 +12,3 @@ Crosshair adapts depending on what the player is wielding and looking at.
   - green: correct tool being used.
   - red: wrong tool being used.
   - white: neutral, can be used but may not be the best thing to use.
-
-## Limitations:
-
-Though an item/tool may have a "use" function the crosshair may or may
-not show this.

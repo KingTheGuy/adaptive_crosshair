@@ -28,6 +28,7 @@ local hud_type = {
 
 -- if you can eat it, you can eat it.
 local all_eatable_items = {}
+
 core.register_on_mods_loaded(function()
   for index, value in pairs(core.registered_items) do
     if core.serialize(value.on_use):match("do_item_eat") then
@@ -61,6 +62,29 @@ core.register_on_mods_loaded(function()
     end
   end
 end)
+
+---@param tool any
+---@param node any
+---check if node and item have the same group
+local function hasGroup(tool, node)
+  if node == nil then
+    return nil
+  end
+  if node.groups then
+    if tool.tool_capabilities and tool.tool_capabilities.groupcaps then
+      -- "n_i" string group_name
+      -- "n_v" number group_level
+      for n_i, n_v in pairs(node.groups) do
+        for t_i, _ in pairs(tool.tool_capabilities.groupcaps) do
+          if t_i == n_i then
+            return n_i, n_v, 0
+          end
+        end
+      end
+    end
+  end
+  return nil
+end
 
 
 ---@param player table
@@ -224,9 +248,9 @@ core.register_globalstep(function(dtime)
           local player_gamemode = mcl_gamemode.get_gamemode(player)
           if core.get_modpath("mcl_meshhand") and mcl_meshhand then
             if player_gamemode == "creative" then
-              reach_distance = tonumber(minetest.settings:get("mcl_hand_range_creative")) or 9.5
+              reach_distance = tonumber(core.settings:get("mcl_hand_range_creative")) or 9.5
             else
-              reach_distance = tonumber(minetest.settings:get("mcl_hand_range")) or 3.5
+              reach_distance = tonumber(core.settings:get("mcl_hand_range")) or 3.5
             end
           end
         end
@@ -236,6 +260,21 @@ core.register_globalstep(function(dtime)
         local hud = player:hud_get_flags()
         local looking = lookingAt(player, reach_distance)
 
+        -- mcl _mcl_diggroups -> axey -> level
+        -- mcl group -> axey_dig -> maxlevel
+
+        --TODO: implement this..
+        -- mcl
+        -- tool_capabilities -> groupcaps -> max_drop_level
+
+        -- asuna
+        -- group -> choppy -> maxlevel
+        -- tool_capabilities -> max_drop_level
+        -- tool_capabilities -> groupcaps -> group_name -> maxlevel
+
+        -- TODO: add all tools to table with their group_name and maxlevel
+        -- if no matching groups found, not the right tool
+
         hud["crosshair"] = false
         -- check if tool has a USE on_secondary_use
         -- core.log(dump(hand_item:to_table()))
@@ -244,7 +283,7 @@ core.register_globalstep(function(dtime)
           -- wielded = core.registered_tools[""]
           wielded = core.registered_tools[""] or
               core.registered_items
-              [""]                  --oops I thought "hand" was a tool, it is an item.
+              [""] --oops I thought "hand" was a tool, it is an item.
         end
         local secondary = nil
         if wielded ~= nil then
@@ -298,42 +337,18 @@ core.register_globalstep(function(dtime)
               node["groups"]["shovel"] or node["groups"]["shovely"]
           local group_hoe = node["groups"]["hoey"]
           local group_shear = node["groups"]["shearsy"]
-          if wielded["tool_capabilities"] ~= nil then
-            if wielded["tool_capabilities"]["max_drop_level"] ~= nil then
-              if wielded["groups"]["weapon"] then
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.attack, normal_opacity)
-              elseif group_stone then
-                if wielded["groups"]["pickaxe"] and wielded["tool_capabilities"]["max_drop_level"] >= group_stone then
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-                else
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-                end
-              elseif group_wood then
-                if wielded["groups"]["axe"] and (wielded["tool_capabilities"]["max_drop_level"] or wielded["tool_capabilities"]["groupcaps"]["choppy"]["maxlevel"]) >= group_wood then
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-                else
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-                end
-              elseif group_soil then
-                if wielded["groups"]["shovel"] and wielded["tool_capabilities"]["max_drop_level"] >= group_soil then
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-                else
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-                end
-              elseif group_hoe then
-                if wielded["groups"]["hoe"] and (wielded["tool_capabilities"]["max_drop_level"] or 1) >= group_hoe then
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-                  -- elseif node["groups"]["handy"] or node["groups"]["crumbly"] then
-                  --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
-                else
-                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-                end
-              else
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
-              end
-            end
+          --TODO: even better would be to get the group of the node and then check if the tool has it
+          local group, mine_level, tool_level = hasGroup(wielded, node)
+          if group ~= nil then
+            set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
+            -- if tool_level >= mine_level then
+            --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
+            -- else
+            --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+            -- end
           else
-            set_crosshair_action(player, hud_type.leftclick, crosshairs.default, normal_opacity)
+            set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+            -- set_crosshair_action(player, hud_type.leftclick, crosshairs.default, normal_opacity)
           end
         end
 
@@ -387,7 +402,7 @@ core.register_globalstep(function(dtime)
 end)
 
 core.register_on_leaveplayer(function(ObjectRef, timed_out)
-  core.log("player left" .. ObjectRef:get_player_name())
+  -- core.log("player left" .. ObjectRef:get_player_name())
   local player_naem = ObjectRef:get_player_name()
   for index, value in ipairs(all_huds) do
     if value[1] == player_naem then

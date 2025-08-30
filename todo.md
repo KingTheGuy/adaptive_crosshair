@@ -6,8 +6,6 @@
 - [ ] maybe raycast depending on what tool/item the player is holding?
   - reason 1:(liquids) if the item requires liquid it can raycast liquids.
   - reason 2:(tool reach) some tools/items may have a different reach
-- [ ] tool_capabilities.. should also look **groupcaps** within it
-  - groups are a mess, fix in the future, or disable correct_tool feature.
 - [ ] settings
   - reach
   - colors
@@ -15,19 +13,15 @@
 
 ## DOING
 
-- [ ] override food: to not mess with the dynamic eating, I need to add that mod as an optional dependency.
-  - just as done with i_have_hands and mineclonia game
-- [x] (this is the best I can do, overriding the item breaks other mods) show 'usable on self' crosshair even if not right_click
-- [x] engine deprecated things.. look at logs
-- [ ] looking at an unknown node causes crashing
-- [ ] #bug crash when looking at some entities or nodes (age of mending)
-
-- NOTE: groups.axe <- this works no brackets needed.
-- for the getGroup function just return when **group** found.
-- get reach/range from itemstack:get_definition
-- [.] create banner image
+- [.] (still needs more work) create banner image
 
 ## DONE
+
+- [x] #bug crash when looking at some entities or nodes (age of mending)
+- [x] looking at an unknown node causes crashing
+- [x] correct tool used on node or not
+- [x] (this is the best I can do, overriding the item breaks other mods) show 'usable on self' crosshair even if not right_click
+- [x] engine deprecated things.. look at logs
 
 - [x] something seems to be broken for multiplayer
   - may need to remove the player's "hud" when they leave the server

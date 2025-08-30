@@ -1,5 +1,9 @@
 {
     "diagnostics.globals": [
-        "core"
+        "core",
+        "dump"
+    ],
+    "diagnostics.disable": [
+        "undefined-global"
     ]
 }
