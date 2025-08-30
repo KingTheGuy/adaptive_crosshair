@@ -15,6 +15,8 @@
 
 ## DOING
 
+- [ ] override food: to not mess with the dynamic eating, I need to add that mod as an optional dependency.
+  - just as done with i_have_hands and mineclonia game
 - [x] (this is the best I can do, overriding the item breaks other mods) show 'usable on self' crosshair even if not right_click
 - [x] engine deprecated things.. look at logs
 - [ ] looking at an unknown node causes crashing

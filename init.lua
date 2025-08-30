@@ -49,13 +49,13 @@ core.register_on_mods_loaded(function()
       --     on_place = function(itemstack, placer, pointed_thing)
       --       on_use(itemstack, placer, pointed_thing)
       --       -- core.log("i dont know")
-      --     end,        
+      --     end,
       --     on_secondary_use = function(itemstack, user, pointed_thing)
       --       on_use(itemstack, user, pointed_thing)
       --       on_secondary_use(itemstack, user, pointed_thing)
       --       core.log("ok wtf")
       --     end,
-        
+
       --   })
       -- end
     end
@@ -85,8 +85,9 @@ local function lookingAt(player, reach_distance)
     return { false, { type = "air" }, false, nil }
   elseif raycast_result.type == "node" then
     local node = core.registered_nodes[core.get_node(raycast_result.under).name]
+
     if node == nil then
-      core.log("this is unknown... lets not crash")
+      return { false, { type = "air" }, false, nil }
     end
 
     local interactible = node.on_rightclick
@@ -242,7 +243,8 @@ core.register_globalstep(function(dtime)
         if wielded == nil then
           -- wielded = core.registered_tools[""]
           wielded = core.registered_tools[""] or
-          core.registered_items[""]                                        --oops I thought "hand" was a tool, it is an item.
+              core.registered_items
+              [""]                  --oops I thought "hand" was a tool, it is an item.
         end
         local secondary = nil
         if wielded ~= nil then
@@ -297,36 +299,38 @@ core.register_globalstep(function(dtime)
           local group_hoe = node["groups"]["hoey"]
           local group_shear = node["groups"]["shearsy"]
           if wielded["tool_capabilities"] ~= nil then
-            if wielded["groups"]["weapon"] then
-              set_crosshair_action(player, hud_type.leftclick, crosshairs.attack, normal_opacity)
-            elseif group_stone then
-              if wielded["groups"]["pickaxe"] and wielded["tool_capabilities"]["max_drop_level"] >= group_stone then
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
+            if wielded["tool_capabilities"]["max_drop_level"] ~= nil then
+              if wielded["groups"]["weapon"] then
+                set_crosshair_action(player, hud_type.leftclick, crosshairs.attack, normal_opacity)
+              elseif group_stone then
+                if wielded["groups"]["pickaxe"] and wielded["tool_capabilities"]["max_drop_level"] >= group_stone then
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
+                else
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+                end
+              elseif group_wood then
+                if wielded["groups"]["axe"] and (wielded["tool_capabilities"]["max_drop_level"] or wielded["tool_capabilities"]["groupcaps"]["choppy"]["maxlevel"]) >= group_wood then
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
+                else
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+                end
+              elseif group_soil then
+                if wielded["groups"]["shovel"] and wielded["tool_capabilities"]["max_drop_level"] >= group_soil then
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
+                else
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+                end
+              elseif group_hoe then
+                if wielded["groups"]["hoe"] and (wielded["tool_capabilities"]["max_drop_level"] or 1) >= group_hoe then
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
+                  -- elseif node["groups"]["handy"] or node["groups"]["crumbly"] then
+                  --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
+                else
+                  set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+                end
               else
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
               end
-            elseif group_wood then
-              if wielded["groups"]["axe"] and (wielded["tool_capabilities"]["max_drop_level"] or wielded["tool_capabilities"]["groupcaps"]["choppy"]["maxlevel"]) >= group_wood then
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-              else
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-              end
-            elseif group_soil then
-              if wielded["groups"]["shovel"] and wielded["tool_capabilities"]["max_drop_level"] >= group_soil then
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-              else
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-              end
-            elseif group_hoe then
-              if wielded["groups"]["hoe"] and (wielded["tool_capabilities"]["max_drop_level"] or 1) >= group_hoe then
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-                -- elseif node["groups"]["handy"] or node["groups"]["crumbly"] then
-                --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
-              else
-                set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-              end
-            else
-              set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
             end
           else
             set_crosshair_action(player, hud_type.leftclick, crosshairs.default, normal_opacity)
@@ -346,9 +350,9 @@ core.register_globalstep(function(dtime)
           -- handles useable tool/item
         elseif wielded["type"] == "node" and looking[2].type == "node" then
           set_crosshair_action(player, hud_type.rightclick, crosshairs.use, interact_opacity)
-        -- elseif wielded["type"] == "craft" and wielded["groups"]["eatable"] then
-        -- elseif all_eatable_items[item_name] or wielded["groups"].edible or wielded["groups"].eatable then
-        -- elseif wielded["groups"].edible or wielded["groups"].eatable then
+          -- elseif wielded["type"] == "craft" and wielded["groups"]["eatable"] then
+          -- elseif all_eatable_items[item_name] or wielded["groups"].edible or wielded["groups"].eatable then
+          -- elseif wielded["groups"].edible or wielded["groups"].eatable then
         elseif all_eatable_items[item_name] then
           set_crosshair_action(player, hud_type.rightclick, crosshairs.use_self, interact_opacity)
         else
