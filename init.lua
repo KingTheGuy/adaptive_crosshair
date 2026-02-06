@@ -103,7 +103,30 @@ local function lookingAt(player, reach_distance)
   local pos = player:get_pos():add(player_look_dir)
   local player_pos = { x = pos.x, y = pos.y + eye_height, z = pos.z }
   local new_pos = player:get_look_dir():multiply(reach_distance):add(player_pos)
-  local raycast_result = core.raycast(player_pos, new_pos, true, false):next()
+  local casted = core.raycast(player_pos, new_pos, true, false)
+  -- TODO determin what which is closer
+  -- local raycast_result = casted:next()
+  local raycast_result = nil
+
+  -- lets ignore the player
+  for ray in casted do
+    if ray.ref and ray.ref == player then
+    else
+      -- core.log("not the player")
+      if raycast_result == nil then
+        raycast_result = ray
+      end
+
+    end
+  end
+
+  if raycast_result == nil then
+    raycast_result = casted:next()
+  end
+
+  if raycast_result == nil then
+    return { false, { type = "air" }, false, nil }
+  end
   local distance = vector.distance(player_pos, new_pos)
   if dump(raycast_result) == "nil" then
     return { false, { type = "air" }, false, nil }

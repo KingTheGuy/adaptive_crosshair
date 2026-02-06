@@ -13,6 +13,7 @@
 
 ## DOING
 
+- [ ] raycast seems to grab more than one thing
 - [.] (still needs more work) create banner image
 
 ## DONE
