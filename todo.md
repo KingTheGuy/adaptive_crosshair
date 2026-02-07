@@ -13,7 +13,10 @@
 
 ## DOING
 
-- [ ] raycast seems to grab more than one thing
+- [ ] need to re-order things.
+  - cross-hair does not update sometimes. node -> item (does not update till I look up at air)
+- [x] only show wrong tool when actually holding a tool, and it being the wrong one
+- [x] raycast seems to grab more than one thing
 - [.] (still needs more work) create banner image
 
 ## DONE

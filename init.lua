@@ -362,16 +362,18 @@ core.register_globalstep(function(dtime)
           local group_shear = node["groups"]["shearsy"]
           --TODO: even better would be to get the group of the node and then check if the tool has it
           local group, mine_level, tool_level = hasGroup(wielded, node)
-          if group ~= nil then
-            set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
-            -- if tool_level >= mine_level then
-            --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
-            -- else
-            --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-            -- end
-          else
-            set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
-            -- set_crosshair_action(player, hud_type.leftclick, crosshairs.default, normal_opacity)
+          if wielded.type == "tool" then
+            if group ~= nil then
+              set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity)
+              -- if tool_level >= mine_level then
+              --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, correct_tool_color)
+              -- else
+              --   set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+              -- end
+            else
+              set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
+              -- set_crosshair_action(player, hud_type.leftclick, crosshairs.default, normal_opacity)
+            end
           end
         end
 

@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 1.0.5:
+- ignore self
+  - when looking down "attackable" crosshair would show.
+- only show wrong tool color when holding a tool
+  - prior; would show "wrong" tool when holding a node/block/item
+
 ### 1.0.4:
 
 - feature removal: tool mine level high enough to mine node.
