@@ -3,24 +3,23 @@
 ## BACKLOG
 
 - [ ] API(not) really just need to have the proper groups
-- [ ] maybe raycast depending on what tool/item the player is holding?
-  - reason 1:(liquids) if the item requires liquid it can raycast liquids.
-  - reason 2:(tool reach) some tools/items may have a different reach
 - [ ] settings
-  - reach
   - colors
   - features on/off 
 
 ## DOING
 
-- [ ] need to re-order things.
-  - cross-hair does not update sometimes. node -> item (does not update till I look up at air)
-- [x] only show wrong tool when actually holding a tool, and it being the wrong one
-- [x] raycast seems to grab more than one thing
 - [.] (still needs more work) create banner image
 
 ## DONE
 
+- [x] maybe raycast depending on what tool/item the player is holding?
+  - reason 1:(liquids) if the item requires liquid it can raycast liquids.
+  - reason 2:(tool reach) some tools/items may have a different reach
+- [x] need to re-order things.
+  - cross-hair does not update sometimes. node -> item (does not update till I look up at air)
+- [x] only show wrong tool when actually holding a tool, and it being the wrong one
+- [x] raycast seems to grab more than one thing
 - [x] #bug crash when looking at some entities or nodes (age of mending)
 - [x] looking at an unknown node causes crashing
 - [x] correct tool used on node or not

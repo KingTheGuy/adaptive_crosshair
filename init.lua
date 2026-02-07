@@ -5,7 +5,20 @@ local normal_opacity = 165   -- 0 - 255
 local interact_opacity = 125 -- 0 - 255
 local correct_tool_color = "#39FF14"
 local wrong_tool_color = "#f90000"
-local color_alpha = "145" -- 0 - 255
+
+-- Protanopia (Red Weakness)
+-- local correct_tool_color = "#FFDAB9"
+-- local wrong_tool_color = "#FFA500"
+
+-- Deuteranopia (Green Weakness)
+-- local correct_tool_color = "#008080"
+-- local wrong_tool_color = "#007BFF"
+
+-- Tritanopia (Blue Weakness)
+-- local correct_tool_color = "#FFFF00"
+-- local wrong_tool_color = "#A9A9A9"
+
+local color_alpha = "145" -- 0 - 255 145
 
 ---@enum crosshairs
 local crosshairs = {
@@ -265,7 +278,8 @@ core.register_globalstep(function(dtime)
     local players = core.get_connected_players()
     if #players > 0 then
       for _, player in ipairs(players) do
-        local reach_distance = 3.5
+        local hand_item = player:get_wielded_item()
+        local reach_distance = hand_item.range or 3.5
         --NOTE: mcl_ reach support
         if core.get_modpath("mcl_gamemode") and mcl_gamemode then
           local player_gamemode = mcl_gamemode.get_gamemode(player)
@@ -278,7 +292,6 @@ core.register_globalstep(function(dtime)
           end
         end
 
-        local hand_item = player:get_wielded_item()
         local item_name = hand_item:get_name()
         local hud = player:hud_get_flags()
         local looking = lookingAt(player, reach_distance)
@@ -303,10 +316,8 @@ core.register_globalstep(function(dtime)
         -- core.log(dump(hand_item:to_table()))
         local wielded = core.registered_tools[item_name] or core.registered_items[item_name]
         if wielded == nil then
-          -- wielded = core.registered_tools[""]
           wielded = core.registered_tools[""] or
-              core.registered_items
-              [""] --oops I thought "hand" was a tool, it is an item.
+              core.registered_items [""] --oops I thought "hand" was a tool, it is an item.
         end
         local secondary = nil
         if wielded ~= nil then
@@ -374,6 +385,8 @@ core.register_globalstep(function(dtime)
               set_crosshair_action(player, hud_type.leftclick, crosshairs.mine, normal_opacity, wrong_tool_color)
               -- set_crosshair_action(player, hud_type.leftclick, crosshairs.default, normal_opacity)
             end
+          else
+            set_crosshair_action(player, hud_type.leftclick, crosshairs.default, normal_opacity)
           end
         end
 
@@ -393,6 +406,8 @@ core.register_globalstep(function(dtime)
           -- elseif wielded["type"] == "craft" and wielded["groups"]["eatable"] then
           -- elseif all_eatable_items[item_name] or wielded["groups"].edible or wielded["groups"].eatable then
           -- elseif wielded["groups"].edible or wielded["groups"].eatable then
+
+        -- NOTE: was going to add support for "usabled" indicator for bow.. but too messy of a setup and the defualt corsshair fits it well enough
         elseif all_eatable_items[item_name] then
           set_crosshair_action(player, hud_type.rightclick, crosshairs.use_self, interact_opacity)
         else

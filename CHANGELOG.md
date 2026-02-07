@@ -1,10 +1,16 @@
 # CHANGELOG
 
 ### 1.0.5:
-- ignore self
+
+- only show wrong tool "color" when holding a tool
+  - prior; would show wrong tool "color" when holding a node/block/item
+  - (yes this was **not** a bug, it was intentional.. I am a better person now)
+- should now take into account the item/tool/node's range
+  - note; some mods do funky stuff with attack distance calculations..
+    meaning that the attack indicator wont always be correct
+
+fixes:
   - when looking down "attackable" crosshair would show.
-- only show wrong tool color when holding a tool
-  - prior; would show "wrong" tool when holding a node/block/item
 
 ### 1.0.4:
 
